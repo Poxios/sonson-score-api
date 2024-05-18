@@ -12,7 +12,7 @@
     {
       "name": "string",
       "score": "number",
-      "region": "string"
+      "data": "string"
     }
     ```
 - **응답**:
