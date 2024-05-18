@@ -4,7 +4,7 @@ const sqlite3 = require("sqlite3");
 const { open } = require("sqlite");
 
 const app = express();
-const port = 3000;
+const port = 3030;
 const dbPromise = open({
   filename: "scoreboard.db",
   driver: sqlite3.Database,
