@@ -13,20 +13,20 @@ const dbPromise = open({
 app.use(bodyParser.json());
 
 app.post("/score", async (req, res) => {
-  const { name, score, region } = req.body;
+  const { name, score, data } = req.body;
 
-  if (typeof name !== "string" || typeof score !== "number" || typeof region !== "string") {
+  if (typeof name !== "string" || typeof score !== "number" || typeof data !== "string") {
     return res.status(400).send("Invalid input");
   }
 
   const db = await dbPromise;
-  await db.run("INSERT INTO scores (name, score, region) VALUES (?, ?, ?)", [name, score, region]);
+  await db.run("INSERT INTO scores (name, score, data) VALUES (?, ?, ?)", [name, score, data]);
 
   // Re-sort the table based on score after insertion
   const rows = await db.all("SELECT * FROM scores ORDER BY score DESC");
   await db.exec("DELETE FROM scores");
   for (const row of rows) {
-    await db.run("INSERT INTO scores (name, score, region) VALUES (?, ?, ?)", [row.name, row.score, row.region]);
+    await db.run("INSERT INTO scores (name, score, data) VALUES (?, ?, ?)", [row.name, row.score, row.data]);
   }
 
   res.status(201).send("Score added successfully");
@@ -34,7 +34,7 @@ app.post("/score", async (req, res) => {
 
 app.get("/scores", async (req, res) => {
   const db = await dbPromise;
-  const rows = await db.all("SELECT * FROM scores ORDER BY score DESC LIMIT 10");
+  const rows = await db.all("SELECT * FROM scores ORDER BY score DESC LIMIT 100");
   res.json(rows);
 });
 
@@ -57,7 +57,7 @@ app.delete("/scores", async (req, res) => {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
         score INTEGER,
-        region TEXT
+        data TEXT
     )
   `);
   app.listen(port, () => {
